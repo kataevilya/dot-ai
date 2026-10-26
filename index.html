@@ -300,6 +300,28 @@
             padding-top: 8px;
         }
 
+        .settings-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 13.5px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .settings-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
         .sidebar-divider {
             height: 1px;
             background: var(--border-subtle);
@@ -458,6 +480,10 @@
             font-family: inherit;
         }
 
+        .model-picker:hover {
+            background: var(--bg-surface);
+        }
+
         .model-select-native {
             background: transparent;
             border: none;
@@ -472,6 +498,36 @@
         .model-select-native option {
             background: #161616;
             color: var(--text-primary);
+        }
+
+        .server-badge {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: #141414;
+            border: 1px solid #222;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #2ecc71;
+        }
+
+        .status-dot.waking {
+            background: #f39c12;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
         }
 
         .nav-center {
@@ -490,6 +546,26 @@
             align-items: center;
             justify-content: flex-end;
             gap: 10px;
+        }
+
+        .btn-share {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 7px;
+            transition: color 0.15s, background 0.15s;
+        }
+
+        .btn-share:hover {
+            color: var(--text-primary);
+            background: var(--bg-surface);
         }
 
         /* Поток сообщений */
@@ -919,7 +995,7 @@
             padding: 0 4px;
         }
 
-        /* ================= МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ FIREBASE ================= */
+        /* ================= МОДАЛЬНЫЕ ОКНА ================= */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -1143,12 +1219,29 @@
             </div>
 
             <div class="history-container" id="historyContainer">
-                <!-- При первом заходе пусто -->
+                <!-- При первом заходе здесь пусто -->
             </div>
         </div>
 
         <div class="sidebar-bottom">
-            <!-- Выпадающее меню профиля -->
+            <button class="settings-btn" onclick="openSettingsModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                <span>Настройки</span>
+            </button>
+
+            <div class="sidebar-divider"></div>
+
+            <!-- Выпадающее меню пользователя -->
             <div class="profile-dropdown" id="profileDropdown">
                 <button class="dropdown-item" id="btnLoginAction" onclick="openAuthModal()">
                     Войти в аккаунт
@@ -1193,12 +1286,30 @@
                         <option value="deep">2.0 Pro</option>
                     </select>
                 </div>
+                <div class="server-badge" onclick="openSettingsModal()" title="Нажмите для настройки сервера">
+                    <span class="status-dot" id="serverStatusDot"></span>
+                    <span id="serverBadgeText">ryzik3489/aimodels</span>
+                </div>
             </div>
 
             <div class="nav-center" id="currentChatHeaderTitle">Новый чат</div>
 
             <div class="nav-right">
-                <!-- Кнопка Поделиться и троеточие полностью удалены -->
+                <button class="btn-share" onclick="shareChat()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                        <polyline points="16 6 12 2 8 6"/>
+                        <line x1="12" y1="2" x2="12" y2="15"/>
+                    </svg>
+                    <span>Поделиться</span>
+                </button>
+                <button class="icon-btn" onclick="deleteCurrentChat()" title="Удалить текущий чат">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                </button>
             </div>
         </header>
 
@@ -1294,12 +1405,35 @@
         </div>
     </div>
 
+    <!-- ================= МОДАЛЬНОЕ ОКНО НАСТРОЕК СЕРВЕРА ================= -->
+    <div class="modal-backdrop" id="settingsModal" onclick="closeModalOnOutside(event, 'settingsModal')">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Настройки подключения</h2>
+                <p>Адрес вашего Hugging Face Space бэкенда</p>
+            </div>
+
+            <div class="auth-form">
+                <label style="font-size:12px; color:var(--text-secondary);">Hugging Face Space (или полный URL):</label>
+                <input type="text" id="spaceIdInput" class="auth-input" placeholder="ryzik3489/aimodels">
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+                    <button type="button" class="starter-chip" style="font-size:11.5px; padding:4px 10px;" onclick="document.getElementById('spaceIdInput').value='ryzik3489/aimodels'">ryzik3489/aimodels</button>
+                    <button type="button" class="starter-chip" style="font-size:11.5px; padding:4px 10px;" onclick="document.getElementById('spaceIdInput').value='ryzik3489/bot'">ryzik3489/bot</button>
+                </div>
+                <button type="button" class="btn-auth-submit" onclick="saveServerSettings()">Сохранить сервер</button>
+            </div>
+
+            <div class="auth-divider">аккаунт</div>
+            <button type="button" class="btn-auth-submit" onclick="document.getElementById('settingsModal').classList.remove('active'); openAuthModal();">Управление входом Firebase</button>
+        </div>
+    </div>
+
     <div class="toast" id="toastBox">Скопировано в буфер обмена</div>
 
     <!-- Подсветка кода -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
-    <!-- Основная логика -->
+    <!-- Основная логика: Firebase + Gradio Client -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
@@ -1327,7 +1461,7 @@
         import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/+esm";
         import { marked } from "https://cdn.jsdelivr.net/npm/marked/+esm";
 
-        // Конфигурация Firebase
+        // Конфигурация Firebase пользователя
         const firebaseConfig = {
             apiKey: "AIzaSyBxWhSwY0CnzNJDpDv3t93r-ES87VNpHNA",
             authDomain: "mios-d93a0.firebaseapp.com",
@@ -1344,9 +1478,12 @@
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Жестко привязанный бэкенд без лимитов
-        const HF_BACKEND_SPACE = "ryzik3489/aimodels";[cite: 1]
+        // Адрес вашего Hugging Face сервера
+        let hfBackendSpace = localStorage.getItem("tochka_hf_space") || "ryzik3489/aimodels";
+        document.getElementById('serverBadgeText').textContent = hfBackendSpace;
+        document.getElementById('spaceIdInput').value = hfBackendSpace;
 
+        // Состояние приложения (при первом заходе чатов нет!)
         let currentUser = null;
         let chats = [];
         let activeChatId = null;
@@ -1354,6 +1491,7 @@
         let attachedFileContent = "";
         let attachedFileName = "";
 
+        // Настройка рендерера Marked для блоков кода
         const renderer = new marked.Renderer();
         renderer.code = function(codeObjOrText, lang) {
             const codeText = typeof codeObjOrText === 'object' ? codeObjOrText.text : codeObjOrText;
@@ -1371,10 +1509,12 @@
         };
         marked.setOptions({ renderer, breaks: true });
 
+        // Однократная очистка старого демо-чата, если он остался в браузере
         function cleanLegacyDemoChat(list) {
             return list.filter(c => c.id !== "demo-launch-plan" && Array.isArray(c.messages) && c.messages.length > 0);
         }
 
+        // ================= РАБОТА С FIREBASE AUTH & FIRESTORE =================
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             updateUserProfileUI();
@@ -1415,6 +1555,7 @@
 
         async function loadUserChats() {
             let loadedChats = [];
+
             try {
                 const localRaw = localStorage.getItem(getLocalStorageKey());
                 if (localRaw) {
@@ -1432,11 +1573,15 @@
                         cloudChats.sort((a, b) => b.updatedAt - a.updatedAt);
                         loadedChats = cleanLegacyDemoChat(cloudChats);
                     }
-                } catch (err) {}
+                } catch (err) {
+                    console.warn("Firestore sync fallback to localStorage:", err.message);
+                }
             }
 
             chats = loadedChats;
             localStorage.setItem(getLocalStorageKey(), JSON.stringify(chats));
+
+            // При первом заходе чатов нет (activeChatId = null), показывается пустой стартовый экран
             activeChatId = chats.length > 0 ? chats[0].id : null;
             renderChatList();
             renderActiveChat();
@@ -1453,18 +1598,23 @@
                         ...updatedChat,
                         uid: currentUser.uid
                     });
-                } catch (err) {}
+                } catch (err) {
+                    console.warn("Сохранено локально:", err.message);
+                }
             }
         }
 
+        // ================= РЕНДЕРИНГ СПИСКА ЧАТОВ =================
         window.renderChatList = function() {
             const container = document.getElementById('historyContainer');
             const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
             container.innerHTML = '';
 
+            // Показываем только реальные чаты, в которых есть сообщения
             const validChats = chats.filter(c => c.messages && c.messages.length > 0);
+
             if (validChats.length === 0) {
-                container.innerHTML = `<div class="history-empty-hint">История чатов пуста.<br>Напишите первое сообщение.</div>`;
+                container.innerHTML = `<div class="history-empty-hint">История чатов пуста.<br>Напишите первое сообщение, чтобы начать диалог.</div>`;
                 return;
             }
 
@@ -1476,7 +1626,11 @@
 
             const now = Date.now();
             const oneDay = 86400000;
-            const groups = { "Сегодня": [], "Вчера": [], "Предыдущие 7 дней": [] };
+            const groups = {
+                "Сегодня": [],
+                "Вчера": [],
+                "Предыдущие 7 дней": []
+            };
 
             filtered.forEach(chat => {
                 const diff = now - (chat.updatedAt || now);
@@ -1518,6 +1672,7 @@
             renderActiveChat();
         };
 
+        // Открывает чистый экран нового чата, не засоряя список пустыми диалогами
         window.startFreshView = function() {
             activeChatId = null;
             renderChatList();
@@ -1555,6 +1710,7 @@
             showToast("История чатов очищена");
         };
 
+        // ================= РЕНДЕРИНГ АКТИВНОГО ДИАЛОГА =================
         function renderActiveChat() {
             const column = document.getElementById('chatColumn');
             const headerTitle = document.getElementById('currentChatHeaderTitle');
@@ -1644,6 +1800,7 @@
         function formatAiMarkdown(rawText) {
             if (!rawText) return '<span style="color:var(--text-muted);">Думаю...</span>';
             let processed = rawText;
+
             if (processed.includes('<think>')) {
                 processed = processed.replace(
                     /<think>([\s\S]*?)<\/think>/g,
@@ -1662,14 +1819,18 @@
             }
         }
 
+        // ================= УМНОЕ ПОДКЛЮЧЕНИЕ С ОБХОДОМ ОШИБКИ 503 =================
         async function connectToGradioWithRetry(spaceName, statusCallback) {
             const maxAttempts = 4;
             for (let attempt = 1; attempt <= maxAttempts; attempt++) {
                 try {
+                    const statusDot = document.getElementById('serverStatusDot');
                     if (attempt > 1) {
-                        statusCallback(`⏳ Сервер **${spaceName}** просыпается или загружает модель (попытка ${attempt}/${maxAttempts})... Подождите пару секунд.`);
+                        statusDot.classList.add('waking');
+                        statusCallback(`⏳ Сервер **${spaceName}** просыпается или загружает модель (попытка ${attempt} из ${maxAttempts})... Подождите пару секунд.`);
                     }
                     const appClient = await client(spaceName);
+                    statusDot.classList.remove('waking');
                     return appClient;
                 } catch (err) {
                     const msg = String(err.message || err);
@@ -1698,6 +1859,7 @@
                 document.getElementById('attachLabel').textContent = "Добавить файл";
             }
 
+            // Создаём чат только при отправке первого сообщения
             let currentChat = chats.find(c => c.id === activeChatId);
             if (!currentChat) {
                 currentChat = {
@@ -1719,7 +1881,10 @@
                 timestamp: `Сегодня, ${nowTime}`
             });
 
-            const aiMessageObj = { role: "ai", content: "Подключение к серверу Точка..." };
+            const aiMessageObj = {
+                role: "ai",
+                content: "Подключение к серверу Точка..."
+            };
             currentChat.messages.push(aiMessageObj);
             currentChat.updatedAt = Date.now();
 
@@ -1735,7 +1900,7 @@
             const targetAiBody = aiBodies[aiBodies.length - 1];
 
             try {
-                const hfApp = await connectToGradioWithRetry(HF_BACKEND_SPACE, (statusText) => {
+                const hfApp = await connectToGradioWithRetry(hfBackendSpace, (statusText) => {
                     aiMessageObj.content = statusText;
                     targetAiBody.innerHTML = formatAiMarkdown(aiMessageObj.content);
                 });
@@ -1753,9 +1918,9 @@
             } catch (error) {
                 const errText = String(error.message || error);
                 if (errText.includes("503") || errText.includes("Could not resolve app config")) {
-                    aiMessageObj.content = `⏳ **Сервер сейчас запускается (Код 503).**\n\nКонтейнер на Hugging Face просыпается или загружает модель. Подождите 1 минуту и нажмите кнопку **Перегенерировать** (🔄) ниже.`;
+                    aiMessageObj.content = `⏳ **Сервер \`${hfBackendSpace}\` сейчас запускается или собирается (Код 503).**\n\nЧто это значит:\n1. Контейнер на Hugging Face находится в статусе **Building** или **Starting** (скачивает модель \`Qwen2.5-Coder\`).\n2. Подождите 1–2 минуты, пока на странице вашего Space появится зелёный статус **Running**, и нажмите кнопку **Перегенерировать** (🔄) ниже.`;
                 } else {
-                    aiMessageObj.content = `⚠️ **Ошибка соединения**:\n\`${errText}\``;
+                    aiMessageObj.content = `⚠️ **Ошибка ответа от \`${hfBackendSpace}\`**:\n\`${errText}\``;
                 }
                 targetAiBody.innerHTML = formatAiMarkdown(aiMessageObj.content);
             } finally {
@@ -1775,6 +1940,7 @@
             if (!currentChat) return;
             const prevUserMsg = currentChat.messages[msgIndex - 1];
             if (!prevUserMsg || prevUserMsg.role !== 'user') return;
+
             currentChat.messages.splice(msgIndex - 1, 2);
             sendMessage(prevUserMsg.content);
         };
@@ -1791,6 +1957,23 @@
             navigator.clipboard.writeText(pre.innerText);
             btn.textContent = "Скопировано!";
             setTimeout(() => btn.textContent = "Копировать", 1800);
+        };
+
+        // ================= НАСТРОЙКИ СЕРВЕРА И АВТОРИЗАЦИЯ =================
+        window.openSettingsModal = function() {
+            document.getElementById('spaceIdInput').value = hfBackendSpace;
+            document.getElementById('settingsModal').classList.add('active');
+        };
+
+        window.saveServerSettings = function() {
+            const val = document.getElementById('spaceIdInput').value.trim();
+            if (val) {
+                hfBackendSpace = val;
+                localStorage.setItem("tochka_hf_space", val);
+                document.getElementById('serverBadgeText').textContent = val;
+                showToast("Сервер сохранён: " + val);
+            }
+            document.getElementById('settingsModal').classList.remove('active');
         };
 
         window.openAuthModal = function() {
@@ -1821,9 +2004,9 @@
             try {
                 await signInWithPopup(auth, googleProvider);
                 document.getElementById('authModal').classList.remove('active');
-                showToast("Успешный вход через Google");
+                showToast("Вы успешно вошли через Google");
             } catch (err) {
-                errBox.textContent = "Ошибка входа: " + err.message;
+                errBox.textContent = "Ошибка входа Google: " + err.message;
             }
         };
 
@@ -1842,7 +2025,7 @@
                         await updateProfile(cred.user, { displayName: name });
                         updateUserProfileUI();
                     }
-                    showToast("Аккаунт создан!");
+                    showToast("Аккаунт успешно создан!");
                 } else {
                     await signInWithEmailAndPassword(auth, email, password);
                     showToast("С возвращением!");
@@ -1859,6 +2042,7 @@
             showToast("Вы вышли из аккаунта");
         };
 
+        // ================= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ UI =================
         window.toggleSidebar = function() {
             const sb = document.getElementById('sidebar');
             const expandBtn = document.getElementById('btnExpandSidebar');
@@ -1910,7 +2094,7 @@
         window.startVoiceInput = function() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                showToast("Голосовой ввод не поддерживается браузером");
+                showToast("Ваш браузер не поддерживает голосовой ввод");
                 return;
             }
             const recognition = new SpeechRecognition();
@@ -1923,6 +2107,14 @@
                 autoResizeTextarea(input);
             };
             recognition.start();
+        };
+
+        window.shareChat = function() {
+            const currentChat = chats.find(c => c.id === activeChatId);
+            if (!currentChat) return;
+            const textExport = currentChat.messages.map(m => `${m.role === 'user' ? 'Вы' : 'Точка'}:\n${m.content}`).join('\n\n---\n\n');
+            navigator.clipboard.writeText(textExport);
+            showToast("Диалог скопирован для отправки");
         };
 
         function scrollToBottom() {
